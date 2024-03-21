@@ -171,21 +171,50 @@ export default function App() {
 
   function onKeyDown(e) {
     const targetKey = e.key;
-    const keyMatch = synthKeys.some((key) => key.computerKey === targetKey);
+    const keyMatch = synthKeys.find((key) => key.computerKey === targetKey);
     if (keyMatch) {
-      setSynthKeys((prevKeys) => [
-        {
-          ...prevKeys,
-          active: true,
-          keyPressed: true,
-        },
-      ]);
+      setSynthKeys((prevKeys) =>
+        prevKeys.map((key) =>
+          key === keyMatch ? { ...key, active: true, keyPressed: true } : key
+        )
+      );
+    }
+  }
+
+  function onClick(e) {
+    const targetKey = e.target.dataset.note;
+    const keyMatch = synthKeys.find((key) => key.keyName === targetKey);
+    if (keyMatch) {
+      setSynthKeys((prevKeys) =>
+        prevKeys.map((key) =>
+          key === keyMatch ? { ...key, active: true} : key
+        )
+      );
+    }
+    console.log(targetKey);
+  }
+
+  function onKeyUp(e) {
+    const targetKey = e.key;
+    const keyMatch = synthKeys.find((key) => key.computerKey === targetKey);
+    if (keyMatch) {
+      setSynthKeys((prevKeys) =>
+        prevKeys.map((key) =>
+          key === keyMatch ? { ...key, active: false, keyPressed: false } : key
+        )
+      );
     }
   }
 
   return (
     <div className="wrapper">
-      <div className="main-container" onKeyDown={onKeyDown} tabIndex="0">
+      <div
+        className="main-container"
+        onKeyDown={onKeyDown}
+        onClick={onClick}
+        onKeyUp={onKeyUp}
+        tabIndex="-1"
+      >
         <Settings {...propsBundle} />
 
         <Keys showKeys={showKeys} synthKeys={synthKeys} />
